@@ -18,8 +18,9 @@ module.exports = (sequelize, Sequelize, DataTypes) => {
     },
     tripEnded: {
       type: DataTypes.BOOLEAN,
-      default: false,
+      defaultValue: false,
     },
+    weight: { type: DataTypes.INTEGER },
     distance: {
       type: DataTypes.VIRTUAL,
       get() {
