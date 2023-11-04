@@ -1,0 +1,1 @@
+{"lat":28.898784,"lng":77.124441,"speed":1.5931425,"tripId":"9","accuracy":39.259,"direction":260.07928,"timestamp":"2023-10-15 20:07:35.678","vehicleStopage":true}
