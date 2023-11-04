@@ -1,6 +1,6 @@
 const { getDistanceBetweenCoordinates } = require("./util");
 
-const stoppageThresholdMeters = 10;
+const stoppageThresholdMeters = 6;
 const stoppageDurationMinutes = 1;
 
 let mp = {};

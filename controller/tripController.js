@@ -14,6 +14,8 @@ const {
   notFoundResponse,
 } = require("../util/response");
 
+const { PythonShell } = require("python-shell");
+
 exports.createTrip = async (req, res) => {
   try {
     const {
@@ -34,6 +36,7 @@ exports.createTrip = async (req, res) => {
       DriverId: driverId,
       CompanyId: companyId,
       UserId: userId,
+      tripEnded: true,
     });
 
     return createdSuccessResponse(res, "Trip Successfully Created", trip);
@@ -57,6 +60,69 @@ exports.fetchTripsByCompany = async (req, res) => {
     });
 
     return successResponse(res, "Successfully fetched all trips", trips);
+  } catch (error) {
+    console.log(error);
+    return serverErrorResponse(res);
+  }
+};
+
+exports.fetchBatchTripsByCompany = async (req, res) => {
+  try {
+    const { companyId } = req.body;
+
+    if (!companyId) {
+      return notFoundResponse(res, "Company Id not found in query");
+    }
+
+    // const trips = await Trip.findAll({
+    //   where: { CompanyId: companyId },
+    //   include: [Driver],
+    // });
+
+    const trips = [
+      {
+        tripId: 5,
+        source: { lat: 28.234208636605853, lng: 77.33205868320063 },
+        destination: { lat: 20.583081095376528, lng: 79.59703213539039 },
+        weight: 500,
+      },
+      {
+        tripId: 6,
+        source: { lat: 29.004173642205913, lng: 75.85949922908723 },
+        destination: { lat: 21.9789773956468, lng: 78.57553789746748 },
+        weight: 500,
+      },
+      {
+        tripId: 7,
+        source: { lat: 27.277099096093625, lng: 81.89005664412944 },
+        destination: { lat: 23.257127747269138, lng: 75.47666597582126 },
+        weight: 750,
+      },
+      {
+        tripId: 8,
+        source: { lat: 28.612423089010715, lng: 77.88637750237245 },
+        destination: { lat: 20.8528659379407, lng: 79.52087823225143 },
+        weight: 750,
+      },
+      {
+        tripId: 9,
+        source: { lat: 28.782375617610533, lng: 76.46124511917708 },
+        destination: { lat: 18.157236016226136, lng: 74.84955078308683 },
+        weight: 750,
+      },
+    ];
+
+    PythonShell.run("batching_headout.py", {
+      args: [JSON.stringify(trips)],
+    }).then((messages) => {
+      console.log("finished", messages);
+      // return successResponse(res, "Successfully fetched all trips", messages);
+    });
+    return successResponse(
+      res,
+      "Successfully fetched all trips outside",
+      trips
+    );
   } catch (error) {
     console.log(error);
     return serverErrorResponse(res);

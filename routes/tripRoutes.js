@@ -6,11 +6,13 @@ const {
   fetchTripsById,
   fetchTripsByClient,
   fetchTripsByDriver,
+  fetchBatchTripsByCompany,
 } = require("../controller/tripController");
 
 const router = express.Router();
 
 router.get("/", fetchTripsByCompany);
+router.post("/batch", fetchBatchTripsByCompany);
 router.get("/:id", fetchTripsById);
 router.post("/", createTrip);
 router.post("/client", fetchTripsByClient);
