@@ -97,102 +97,15 @@ exports.fetchBatchTripsByCompany = async (req, res) => {
       include: [Driver],
     });
 
-    trips = trips.filter((el) => new Date(el.scheduledTime) >= Date.now());
-    // const trips = [
-    //   {
-    //     tripId: 5,
-    //     source: { lat: 28.234208636605853, lng: 77.33205868320063 },
-    //     destination: { lat: 20.583081095376528, lng: 79.59703213539039 },
-    //     weight: 500,
-    //   },
-    //   {
-    //     tripId: 6,
-    //     source: { lat: 29.004173642205913, lng: 75.85949922908723 },
-    //     destination: { lat: 21.9789773956468, lng: 78.57553789746748 },
-    //     weight: 500,
-    //   },
-    //   {
-    //     tripId: 7,
-    //     source: { lat: 27.277099096093625, lng: 81.89005664412944 },
-    //     destination: { lat: 23.257127747269138, lng: 75.47666597582126 },
-    //     weight: 750,
-    //   },
-    //   {
-    //     tripId: 8,
-    //     source: { lat: 28.612423089010715, lng: 77.88637750237245 },
-    //     destination: { lat: 20.8528659379407, lng: 79.52087823225143 },
-    //     weight: 750,
-    //   },
-    //   {
-    //     tripId: 9,
-    //     source: { lat: 28.782375617610533, lng: 76.46124511917708 },
-    //     destination: { lat: 18.157236016226136, lng: 74.84955078308683 },
-    //     weight: 750,
-    //   },
-    // ];
+    trips = trips
+      .filter((el) => new Date(el.scheduledTime) >= Date.now())
+      .map((el) => {
+        const { id, source, destination, weight } = el;
+        // console.log(id, source, destination, weight);
+        return { tripId: id, source, destination, weight };
+      });
 
-    // const trips = [
-    //   {
-    //     tripId: 5,
-    //     source: {
-    //       lat: 26.701358646675054,
-    //       lng: 75.48562256540185,
-    //     },
-    //     destination: {
-    //       lat: 25.07540801059919,
-    //       lng: 82.97178574705691,
-    //     },
-    //     weight: 1000,
-    //   },
-    //   {
-    //     tripId: 6,
-    //     source: {
-    //       lat: 26.5944035379648,
-    //       lng: 75.84242775623534,
-    //     },
-    //     destination: {
-    //       lat: 25.53845809266971,
-    //       lng: 82.4891557947634,
-    //     },
-    //     weight: 300,
-    //   },
-    //   {
-    //     tripId: 7,
-    //     source: {
-    //       lat: 26.515784954470565,
-    //       lng: 75.71059182819842,
-    //     },
-    //     destination: {
-    //       lat: 29.927556794554288,
-    //       lng: 78.45100853665144,
-    //     },
-    //     weight: 250,
-    //   },
-    //   {
-    //     tripId: 8,
-    //     source: {
-    //       lat: 27.061541561836318,
-    //       lng: 76.1171942310336,
-    //     },
-    //     destination: {
-    //       lat: 29.852156029941664,
-    //       lng: 78.33600590680298,
-    //     },
-    //     weight: 750,
-    //   },
-    //   {
-    //     tripId: 9,
-    //     source: {
-    //       lat: 30.60186367917381,
-    //       lng: 75.13941179037325,
-    //     },
-    //     destination: {
-    //       lat: 12.954659898562022,
-    //       lng: 77.63686246848359,
-    //     },
-    //     weight: 800,
-    //   },
-    // ];
+    // console.log(trips);
 
     if (!trips.length) {
       return notFoundResponse(res, "no trips present in the future");
@@ -423,7 +336,13 @@ exports.analytics = async (req, res) => {
           text: "Ontime Count",
         },
       },
-      series: onTimeSeriesData,
+      series: [
+        {
+          name: "On Time Arrival",
+          colorByPoint: true,
+          data: onTimeSeriesData,
+        },
+      ],
     };
 
     // 2. Total distance covered for all all clients in a company
@@ -502,11 +421,98 @@ exports.analytics = async (req, res) => {
   }
 };
 
-const x =
-  "[[{'tripId': 5, 'source': {'lat': 26.701358646675054, 'lng': 75.48562256540185}, 'destination': {'lat': 25.07540801059919, 'lng': 82.97178574705691}, 'weight': 1000}, {'tripId': 6, 'source': {'lat': 26.5944035379648, 'lng': 75.84242775623534}, 'destination': {'lat': 25.53845809266971, 'lng': 82.4891557947634}, 'weight': 300}], [{'tripId': 8, 'source': {'lat': 27.061541561836318, 'lng': 76.1171942310336}, 'destination': {'lat': 29.852156029941664, 'lng': 78.33600590680298}, 'weight': 750}, {'tripId': 7, 'source': {'lat': 26.515784954470565, 'lng': 75.71059182819842}, 'destination': {'lat': 29.927556794554288, 'lng': 78.45100853665144}, 'weight': 250}], [{'tripId': 9, 'source': {'lat': 30.60186367917381, 'lng': 75.13941179037325}, 'destination': {'lat': 12.954659898562022, 'lng': 77.63686246848359}, 'weight': 800}]]";
+// const trips = [
+//   {
+//     tripId: 5,
+//     source: { lat: 28.234208636605853, lng: 77.33205868320063 },
+//     destination: { lat: 20.583081095376528, lng: 79.59703213539039 },
+//     weight: 500,
+//   },
+//   {
+//     tripId: 6,
+//     source: { lat: 29.004173642205913, lng: 75.85949922908723 },
+//     destination: { lat: 21.9789773956468, lng: 78.57553789746748 },
+//     weight: 500,
+//   },
+//   {
+//     tripId: 7,
+//     source: { lat: 27.277099096093625, lng: 81.89005664412944 },
+//     destination: { lat: 23.257127747269138, lng: 75.47666597582126 },
+//     weight: 750,
+//   },
+//   {
+//     tripId: 8,
+//     source: { lat: 28.612423089010715, lng: 77.88637750237245 },
+//     destination: { lat: 20.8528659379407, lng: 79.52087823225143 },
+//     weight: 750,
+//   },
+//   {
+//     tripId: 9,
+//     source: { lat: 28.782375617610533, lng: 76.46124511917708 },
+//     destination: { lat: 18.157236016226136, lng: 74.84955078308683 },
+//     weight: 750,
+//   },
+// ];
 
-// Replace single quotes with double quotes to make it a valid JSON string
-const validJson = x.replace(/'/g, '"');
-
-// Parse the string into a JavaScript object
-const jsObject = JSON.parse(validJson);
+// const trips = [
+//   {
+//     tripId: 5,
+//     source: {
+//       lat: 26.701358646675054,
+//       lng: 75.48562256540185,
+//     },
+//     destination: {
+//       lat: 25.07540801059919,
+//       lng: 82.97178574705691,
+//     },
+//     weight: 1000,
+//   },
+//   {
+//     tripId: 6,
+//     source: {
+//       lat: 26.5944035379648,
+//       lng: 75.84242775623534,
+//     },
+//     destination: {
+//       lat: 25.53845809266971,
+//       lng: 82.4891557947634,
+//     },
+//     weight: 300,
+//   },
+//   {
+//     tripId: 7,
+//     source: {
+//       lat: 26.515784954470565,
+//       lng: 75.71059182819842,
+//     },
+//     destination: {
+//       lat: 29.927556794554288,
+//       lng: 78.45100853665144,
+//     },
+//     weight: 250,
+//   },
+//   {
+//     tripId: 8,
+//     source: {
+//       lat: 27.061541561836318,
+//       lng: 76.1171942310336,
+//     },
+//     destination: {
+//       lat: 29.852156029941664,
+//       lng: 78.33600590680298,
+//     },
+//     weight: 750,
+//   },
+//   {
+//     tripId: 9,
+//     source: {
+//       lat: 30.60186367917381,
+//       lng: 75.13941179037325,
+//     },
+//     destination: {
+//       lat: 12.954659898562022,
+//       lng: 77.63686246848359,
+//     },
+//     weight: 800,
+//   },
+// ];

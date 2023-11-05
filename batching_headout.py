@@ -59,7 +59,7 @@ def cluster_trips_by_destination(trips, source_clusters, max_distance_for_destin
 
     for source_cluster_label, cluster_trips in clusters.items():
         destination_coords = [(trip['destination']['lat'], trip['destination']['lng']) for trip in cluster_trips]
-        dbscan = DBSCAN(eps=max_distance_for_destination, min_samples=1, metric=calculate_distance_with_google_maps)
+        dbscan = DBSCAN(eps=max_distance_for_destination, min_samples=100, metric=calculate_distance_with_google_maps)
         destination_labels[source_cluster_label] = dbscan.fit_predict(destination_coords)
 
     return destination_labels,clusters
@@ -80,12 +80,10 @@ def select_trips_in_clusters(trips, max_capacity, max_distance, max_distance_for
 # api_key = "AIzaSyDqGekBgqLxzSbyX6t9TYP18lHLCB72m3Q"
 api_key =args.api_key
 
-max_capacity = 1500  
-max_distance = 1500  
-max_distance_for_source_cluster = 100  
-max_distance_for_destination = 100
-
-
+max_capacity = 1500  # Maximum capacity of the truck
+max_distance = 1500  # Maximum allowed distance in kilometers
+max_distance_for_source_cluster = 50  # Maximum distance for source clustering
+max_distance_for_destination = 50
 
 selected_trips = select_trips_in_clusters(trips, max_capacity, max_distance, max_distance_for_source_cluster, max_distance_for_destination)
 
