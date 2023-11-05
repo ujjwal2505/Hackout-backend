@@ -93,7 +93,7 @@ exports.fetchBatchTripsByCompany = async (req, res) => {
     }
 
     let trips = await Trip.findAll({
-      where: { CompanyId: companyId },
+      where: { CompanyId: companyId, scheduledTime: { [Op.gte]: new Date() } },
       include: [Driver],
     });
 
